@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+        .score {
+            height: 100%;
+            width: 50%;
+            float: left;
+        }
+
+        .serve {
+            font-size: 20vh;
+            font-family: 'Montserrat', sans-serif;
+            position: absolute;
+            bottom: 0;
+
+            background: -webkit-linear-gradient(top,
+                            rgba(242,242,242,1) 0%,
+                            rgba(209,209,209,1) 51%,
+                            rgba(219,219,219,1) 100%);
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .left {
+            left: 0;
+            text-align: left;
+            padding-left: 5%;
+        }
+
+        .right {
+            right: 0;
+            text-align: right;
+            padding-right: 5%;
+        }
+
+        .center {
+            margin-top: 6%;
+            text-align: center;
+            font-size: 35em;
+            font-family: 'Montserrat', sans-serif;
+                            
+            background: -webkit-linear-gradient(top,
+                            rgba(242,242,242,1) 0%,
+                            rgba(209,209,209,1) 51%,
+                            rgba(219,219,219,1) 100%);
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .red {
+            background-color: #ff0000;
+            background-image: linear-gradient(to bottom,
+                                              rgba(248,80,50,.95) 0%,
+                                              rgba(235,3,3,.95) 20%,
+                                              rgba(235,3,3,.95) 60%,
+                                              rgba(247,155,143,.95) 74%,
+                                              rgba(246,39,12,.95) 81%,
+                                              rgba(189,0,0,.95) 100%); /*,*/
+        }
+
+        .blue {
+            background-color: #0000ff;
+            background: linear-gradient(to bottom,
+                                        rgba(80,50,248,1) 0%,
+                                        rgba(3,3,235,1) 20%,
+                                        rgba(3,3,235,1) 60%,
+                                        rgba(155,143,247,1) 74%,
+                                        rgba(39,12,246,1) 81%,
+                                        rgba(0,0,189,1) 100%);
+        }
+        
+        .gold {
+            background-color: #fff430;
+            background: linear-gradient(to bottom,
+                                        rgba(255,252,96,1) 0%,
+                                        rgba(255,244,48,1) 20%,
+                                        rgba(255,244,48,1) 60%,
+                                        rgba(255,244,160,1) 74%,
+                                        rgba(255,235,32,1) 81%,
+                                        rgba(255,220,0,1) 100%);
+        }
+    </style>
+    <script type="text/javascript">
+        var ws = new WebSocket("ws://localhost:8000/socket");
+
+        var serve_id_map = {
+            'red': 'serve_red',
+            'blue': 'serve_blue'
+        };
+
+        var detect_victory = function(red, blue) {
+            var victor = null;
+
+            if ((red >= 11) && (red > blue + 1)) {
+                victor = 'red';
+            }
+            else if ((blue >= 11) && (blue > red + 1)) {
+                victor = 'blue';
+            }
+
+            return victor;
+        }
+
+        var clear_victory = function () {
+            document.getElementById('red').className = "score red";
+            document.getElementById('blue').className = "score blue";
+        }
+
+        var assign_victory = function (victor) {
+            if (victor === 'red') {
+                document.getElementById('red').className = "score gold";
+            }
+            else if (victor === 'blue') {
+                document.getElementById('blue').className = "score gold";
+            }
+            else {
+                clear_victory();
+            }
+        }
+
+        var assign_serve = function(serve, victor) {
+            if (victor !== null) {
+                document.getElementById('serve_red').style.display = "none";
+                document.getElementById('serve_blue').style.display = "none";
+            }
+            else {
+                var nonserve = serve == 'red' ? 'blue' : 'red';
+                document.getElementById(serve_id_map[serve]).style.display = "block";
+                document.getElementById(serve_id_map[nonserve]).style.display = "none";
+            }
+        }
+
+        var set_score = function(red, blue, serve) {
+            document.getElementById('score_red').innerHTML = red;
+            document.getElementById('score_blue').innerHTML = blue;
+
+            var victor = detect_victory(red, blue);
+            assign_victory(victor);
+            assign_serve(serve, victor);
+        };
+
+        ws.onopen = function () {
+            ws.send("Hello world");
+        };
+
+        ws.onmessage = function (event) {
+            console.log(event.data);
+            var message = JSON.parse(event.data);
+            if (message.msg_type === 'scores') {
+                set_score(message.scores.red, message.scores.blue, message.serve);
+            }
+            else if (message.msg_type === 'reset') {
+                clear_victory();
+                set_score(0, 0, message.serve);
+            }
+        };
+
+        ws.onerror = function (event) {
+        };
+
+        ws.onclose = function (event) {
+        };
+    </script>
+</head>
+<body style="margin: 0px;">
+    <div style="position: absolute; height: 100%; width: 100%;">
+        <div id="red" class="score red">
+            <div id="score_red" class="center">6</div>
+            <div id="serve_red" class="left serve">&#9664</div>
+        </div>
+        <div id="blue" class="score blue">
+            <div id="score_blue" class="center">10</div>
+            <div id="serve_blue" class="right serve">&#9654</div><!--&#9658-->
+        </div>
+    </div>
+</body>
+</html>

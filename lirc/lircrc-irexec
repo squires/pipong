@@ -1,0 +1,34 @@
+begin
+  prog = irexec
+  button = KEY_CHANNELDOWN
+  config = echo "red_up" > /home/pi/pipong/pipong_pipe
+  repeat = 0
+end
+
+begin
+  prog = irexec
+  button = KEY_CHANNELUP
+  config = echo "blue_up" > /home/pi/pipong/pipong_pipe
+  repeat = 0
+end
+
+begin
+  prog = irexec
+  button = KEY_VOLUMEDOWN
+  config = echo "red_down" > /home/pi/pipong/pipong_pipe
+  repeat = 0
+end
+
+begin
+  prog = irexec
+  button = KEY_EQUAL
+  config = echo "blue_down" > /home/pi/pipong/pipong_pipe
+  repeat = 0
+end
+
+begin
+  prog = irexec
+  button = KEY_9
+  config = echo "reset" > /home/pi/pipong/pipong_pipe
+  repeat = 0
+end

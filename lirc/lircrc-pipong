@@ -1,0 +1,34 @@
+begin
+  prog = pipong
+  button = KEY_CHANNELDOWN
+  config = red_up
+  repeat = 0
+end
+
+begin
+  prog = pipong
+  button = KEY_CHANNELUP
+  config = blue_up
+  repeat = 0
+end
+
+begin
+  prog = pipong
+  button = KEY_VOLUMEDOWN
+  config = red_down
+  repeat = 0
+end
+
+begin
+  prog = pipong
+  button = KEY_EQUAL
+  config = blue_down
+  repeat = 0
+end
+
+begin
+  prog = pipong
+  button = KEY_9
+  config = reset
+  repeat = 0
+end
