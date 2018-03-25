@@ -1,6 +1,6 @@
 # pipong
 
-pipong is a scoreboard for table tennis that runs on a raspberry pi. It uses an infrared remote control to update the scores. It indicates whose serve it is and recognizes when a game is over.
+pipong is a scoreboard for table tennis that runs on a Raspberry Pi. It uses an infrared remote control to update the scores. It indicates whose serve it is and recognizes when a game is over.
 
 pipong has been tested on a Raspberry Pi Model B running Raspbian Wheezy with the Epiphany browser (version 3.8.2).
 
@@ -12,9 +12,13 @@ pipong uses lirc to receive commands from the infrared remote. One python progra
 
 ### Hardware
 
-  TODO: schematic
+This is the particular remote that this project is configured for by default. It is available at AliExpress (for example, at the time of this writing, [38kHz "Car MP3" Remote Control](https://www.aliexpress.com/item/1pcs-lot-38khz-MCU-learning-board-IR-remote-control-Infrared-decoder-for-protocol-remote-control-For/32711105886.html)). If you use a different remote, you'll need to train lirc to use it.
 
-  TODO: remote control purchase link (aliexpress 38khz infrared remote control mp3 $0.88)
+![IR Remote Control](doc/remote-annotated.jpg)
+
+I used a Vishay TSOP38338 sensor, with the following schematic. It should work without the resistor and capacitor, but the datasheet recommends them.
+
+![Schematic](doc/schematic.png)
 
 ### Installation
 
@@ -59,12 +63,6 @@ Jessie and newer
 sudo apt-get install python-lirc python-requests python-flask python-gevent python-gevent-websockets
 ```
 
-Create named pipe:
-
-```
-mkfifo pipong_pipe
-```
-
 ### Run
 
 Run web server:
@@ -73,15 +71,9 @@ Run web server:
 python web/pipong-web.py
 ```
 
-Run score event handler:
+Run remote interface:
 
 ```
 python remote/pipong-remote.py
-```
-
-Run irexec:
-
-```
-irexec /home/pi/pipong/lircrc
 ```
 
