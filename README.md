@@ -79,3 +79,23 @@ Run remote interface:
 python remote/pipong-remote.py
 ```
 
+Open browser to ```http://localhost:8000```.
+
+### Sys V Init Scripts
+
+My Pi is still running Wheezy, so it uses init.d for starting services.
+
+Copy init scripts to /etc/init.d:
+
+```
+sudo cp initd/pipong-remote /etc/init.d
+sudo cp initd/pipong-web /etc/init.d
+```
+
+Update init script links:
+
+```
+sudo update-rc.d pipong-remote defaults
+sudo update-rc.d pipong-web defaults
+```
+
