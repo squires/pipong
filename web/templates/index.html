@@ -85,8 +85,6 @@
         }
     </style>
     <script type="text/javascript">
-        var ws = new WebSocket("ws://localhost:8000/socket");
-
         var serve_id_map = {
             'red': 'serve_red',
             'blue': 'serve_blue'
@@ -143,27 +141,36 @@
             assign_serve(serve, victor);
         };
 
-        ws.onopen = function () {
-            ws.send("Hello world");
-        };
+        var connect = function() {
+            var ws = new WebSocket("ws://localhost:8000/socket");
 
-        ws.onmessage = function (event) {
-            console.log(event.data);
-            var message = JSON.parse(event.data);
-            if (message.msg_type === 'scores') {
-                set_score(message.scores.red, message.scores.blue, message.serve);
-            }
-            else if (message.msg_type === 'reset') {
-                clear_victory();
-                set_score(0, 0, message.serve);
-            }
-        };
+            ws.onopen = function () {
+                ws.send("Hello world");
+            };
 
-        ws.onerror = function (event) {
-        };
+            ws.onmessage = function (event) {
+                console.log(event.data);
+                var message = JSON.parse(event.data);
+                if (message.msg_type === 'scores') {
+                    set_score(message.scores.red, message.scores.blue, message.serve);
+                }
+                else if (message.msg_type === 'reset') {
+                    clear_victory();
+                    set_score(0, 0, message.serve);
+                }
+            };
 
-        ws.onclose = function (event) {
-        };
+            ws.onerror = function (event) {
+                console.log('websocket error. connection aborted.'); 
+            };
+
+            ws.onclose = function (event) {
+                console.log('websocket connection closed. attempting reconnect in 5 seconds.');
+                setTimeout(function () { connect(); }, 5000);
+            };
+        }
+
+        connect();
     </script>
 </head>
 <body style="margin: 0px;">
