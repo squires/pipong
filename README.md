@@ -4,6 +4,8 @@ pipong is a scoreboard for table tennis that runs on a Raspberry Pi. It uses an 
 
 pipong has been tested on a Raspberry Pi Model B running Raspbian Wheezy with the Epiphany browser (version 3.8.2).
 
+![Screenshot](doc/screenshot.png)
+
 ## Design
 
 pipong uses lirc to receive commands from the infrared remote. One python program listens for remote commands and forwards them to a rest api. The second python program hosts the api and serves the scoreboard as a web page. The api/website can be run on the pi itself or out on the network. Anyone who can access the web site can view the scoreboard. The scores are broadcast to all viewers over a websocket.
