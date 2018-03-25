@@ -1,13 +1,10 @@
 import sys
+import argparse
 import requests
-
-#if len(sys.argv) <= 1:
-#    sys.exit(0)
-
-#event = sys.argv[1]
-#print event
+import lirc
 
 host = 'http://localhost:8000/'
+lircrc = '/home/pi/pipong/lirc/lircrc-pipong'
 
 def call_endpoint(endpoint):
     url = host + endpoint
@@ -30,17 +27,19 @@ def handle_event(event):
     elif event == 'reset':
         call_endpoint('score/reset')
 
-# open the pipe for reading and writing so that at
-# least one process (us) always has it open for writing
-# so that we don't receive an EOF after each message
-pipe = open('/home/pi/pipong/pipong_pipe', 'w+')
+parser = argparse.ArgumentParser()
+parser.add_argument('--url')
+parser.add_argument("lirc_config", nargs='?', default=lircrc)
+args = parser.parse_args()
+if args.url: host = args.url
+if args.lirc_config: lircrc = args.lirc_config
 
 try:
+    sockid = lirc.init("pipong", lircrc)
     while True:
-        event = pipe.readline()
-        print 'event: ' + event.strip()
-        if len(event) > 0:
-            handle_event(event.strip())
+        event = lirc.nextcode()
+        if event:
+            handle_event(event.pop())
 except (KeyboardInterrupt, SystemExit):
     pipe.close()
     sys.exit(0)
